@@ -4,22 +4,37 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Vector;
 
 //创建绘图区，负责绘制背景和坦克
 //添加监听器
 public class MyPanel extends JPanel implements KeyListener {
     Player palyer = null;
+    Vector<Enemies> enemies = new Vector<>();//创建一个敌人坦克的集合使用Vector是因为线程安全
+    int enemyNum = 3;
+
+    //在构造器中创建坦克可以在类的对象实例化的时候一起生成坦克
     public MyPanel() {
-        palyer = new Player(1000,1000);//初始化玩家坦克
+        palyer = new Player(10,0);//初始化玩家坦克
         palyer.setSpeed(1);//设置坦克速度
+        for(int i = 0; i < enemyNum; i++){
+            Enemies enemy = new Enemies(50 * i,0);//可以对坦克进行初始化后放进集合
+            enemy.setType(1);
+            enemy.setDirect(2);
+            enemies.add(enemy);
+        }
     }
     @Override
     public void paint(Graphics g) {
         super.paint(g);
         g.fillRect(0,0,1000,750);//绘制背景
         //将坦克的绘制封装成一个方法方便调用，这样也可以很方便的绘制多个坦克
-        drawTank(palyer.getX(),palyer.getY(),g,palyer.getDirect(),0);
+        drawTank(palyer.getX(),palyer.getY(),g,palyer.getDirect(),palyer.getType());
         //drawTank(palyer.getX() + 60,palyer.getY(),g,0,1);有了方法的封装，减少代码的重复
+        for(int i = 0; i < enemies.size(); i++){
+            Enemies enemy = enemies.get(i);
+            drawTank(enemy.getX(),enemy.getY(),g,enemy.getDirect(),enemy.getType());
+        }
     }
 
     /**

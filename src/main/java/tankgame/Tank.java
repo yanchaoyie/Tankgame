@@ -5,6 +5,16 @@ public class Tank {//创建一个父类tank，后续的玩家坦克和敌人坦�
     private int y;//坦克y坐标
     private int direct;//控制坦克方向0表示向上，1表示向右，2表示向下，3表示向左
     private int speed = 1;//坦克移动速度
+    private int type = 0;
+
+    //设置坦克类型
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public int getType() {
+        return type;
+    }
 
     //提供改变坦克坐标的方法，面向对象的思维
     public void moveUp() {
@@ -39,8 +49,8 @@ public class Tank {//创建一个父类tank，后续的玩家坦克和敌人坦�
     }
 
     public Tank(int X, int Y) {
-        this.x = x;
-        this.y = y;
+        this.x = X;
+        this.y = Y;
     }
 
     public int getX() {
