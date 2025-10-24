@@ -8,7 +8,7 @@ import java.util.Vector;
 
 //创建绘图区，负责绘制背景和坦克
 //添加监听器
-public class MyPanel extends JPanel implements KeyListener {
+public class MyPanel extends JPanel implements KeyListener, Runnable {
     Player palyer = null;
     Vector<Enemies> enemies = new Vector<>();//创建一个敌人坦克的集合使用Vector是因为线程安全
     int enemyNum = 3;
@@ -34,6 +34,13 @@ public class MyPanel extends JPanel implements KeyListener {
         for(int i = 0; i < enemies.size(); i++){
             Enemies enemy = enemies.get(i);
             drawTank(enemy.getX(),enemy.getY(),g,enemy.getDirect(),enemy.getType());
+        }
+
+        //绘制子弹
+        if(palyer.shot != null && palyer.shot.alive == true){
+            for(int i = 0; i < palyer.shots.size(); i++) {
+                g.drawOval(palyer.shots.get(i).x, palyer.shots.get(i).y, 2, 2);
+            }
         }
     }
 
@@ -88,9 +95,9 @@ public class MyPanel extends JPanel implements KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) {
-
     }
     //控制坦克方向以及让坦克移动
+    //监听玩家操作
     @Override
     public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == KeyEvent.VK_W){
@@ -106,10 +113,25 @@ public class MyPanel extends JPanel implements KeyListener {
             palyer.setDirect(3);
             palyer.moveLeft();
         }
+        if(e.getKeyCode() == KeyEvent.VK_J){
+            palyer.shotEnemyTank();
+        }
         this.repaint();
     }
     @Override
     public void keyReleased(KeyEvent e) {
 
+    }
+
+    @Override
+    public void run() {
+        while ( true){
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            this.repaint();
+        }
     }
 }

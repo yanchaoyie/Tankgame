@@ -12,6 +12,8 @@ public class Tankgame extends JFrame {
     public Tankgame() {
         mp = new MyPanel();
         this.add(mp);//引入面板
+        Thread thread = new Thread(mp);
+        thread.start();
         this.setSize(1000, 750);//窗口大小
         this.addKeyListener(mp);//添加键盘监听
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
