@@ -35,11 +35,11 @@ public class Shot implements Runnable{
                     x -= speed;
                     break;
             }//场景大小1000,750
-            if(!(x >= 0 && x <= 1000 && y >= 0 && y <= 750)){
+            if(!(x >= 0 && x <= 1000 && y >= 0 && y <= 750 && alive)){
                 alive = false;
                 break;
             }//测试方法是否工作
-            System.out.println("子弹的坐标：" + x + " " + y);
+            //System.out.println("子弹的坐标：" + x + " " + y);
         }
     }
 }

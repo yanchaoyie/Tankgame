@@ -4,6 +4,7 @@ import java.util.Vector;
 
 //玩家坦克
 public class Player extends Tank{
+    boolean isLive = true;
     Shot shot = null;
     Vector<Shot> shots = new Vector<>();//线程安全集合用于存放子弹
 
@@ -27,7 +28,9 @@ public class Player extends Tank{
                shot = new Shot(getX(),getY() + 20,3);
                break;
         }
-        shots.add(shot);
+        if(shots.size() < 5) {
+            shots.add(shot);
+        }
         new Thread(shot).start();
     }
 }
