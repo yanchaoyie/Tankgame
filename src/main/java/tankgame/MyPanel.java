@@ -16,25 +16,51 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
     Image bomb1 = null;
     Image bomb2 = null;
     Image bomb3 = null;
+    Vector<Node> nodes = new Vector<>();
 
     //在构造器中创建坦克可以在类的对象实例化的时候一起生成坦克
-    public MyPanel() {
+    public MyPanel(String key) {
         palyer = new Player(10,0);//初始化玩家坦克
         palyer.setSpeed(10);//设置坦克速度
+        //把敌人坦克集合加入MyReacord
+        switch(key){
+            case "1":
+                //初始化敌人坦克
+                for(int i = 0; i < enemyNum; i++){
+                    Enemies enemy = new Enemies(50 * (i + 10),50);//可以对坦克进行初始化后放进集合
+                    enemy.setType(1);
+                    //启动敌人线程
+                    Thread thread = new Thread(enemy);
+                    thread.start();
+                    enemies.add(enemy);
+                }
+                //添加敌人坦克集合
+                for(int i = 0; i < enemies.size(); i++){
+                    enemies.get(i).setEnemies(enemies);
+                }
+                break;
+            case "2":
+                MyReacord.readRecord();
+                //读取敌人坦克
+                nodes = MyReacord.nodes;
+                for(int i = 0; i < nodes.size(); i++){
+                    Node node = nodes.get(i);
+                    Enemies enemy = new Enemies(node.getX(), node.getY());
+                    enemy.setDirect(node.getDirect());
+                    enemy.setType(1);
+                    //启动敌人线程
+                    Thread thread = new Thread(enemy);
+                    thread.start();
+                    enemies.add(enemy);
+                }
+                //添加敌人坦克集合
+                for(int i = 0; i < nodes.size(); i++){
+                    enemies.get(i).setEnemies(enemies);
+                }
+                break;
+        }
+        MyReacord.setEnemies(enemies);
 
-        //初始化敌人坦克
-        for(int i = 0; i < enemyNum; i++){
-            Enemies enemy = new Enemies(50 * (i + 10),50);//可以对坦克进行初始化后放进集合
-            enemy.setType(1);
-            //启动敌人线程
-            Thread thread = new Thread(enemy);
-            thread.start();
-            enemies.add(enemy);
-        }
-        //添加敌人坦克集合
-        for(int i = 0; i < enemies.size(); i++){
-            enemies.get(i).setEnemies(enemies);
-        }
         //加载爆炸图片
         bomb1 = Toolkit.getDefaultToolkit().getImage(MyPanel.class.getResource("/bomb1.png"));
         bomb2 = Toolkit.getDefaultToolkit().getImage(MyPanel.class.getResource("/bomb2.png"));
@@ -44,6 +70,7 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
+        showInfo(g);
         g.fillRect(0,0,1000,750);//绘制背景
         //将坦克的绘制封装成一个方法方便调用，这样也可以很方便的绘制多个坦克
         //如果玩家坦克存活就会绘制
@@ -103,6 +130,15 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
         }
     }
 
+    //绘制玩家击毁坦克数量信息
+    public void showInfo(Graphics g){
+        g.setColor(Color.black);
+        g.drawString("击毁敌人坦克数量：",1024, 25);
+
+        drawTank(1024,50,g,0,0);
+        g.setColor(Color.black);
+        g.drawString(MyReacord.getRecord() + " ",1084,100);
+    }
     /**
      *
      * @param x 坦克的x坐标
@@ -241,6 +277,7 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
                         bombs.add(new Bomb(enemy.getX(),enemy.getY()));
                         //如果被打中就删除打中的坦克
                         enemies.remove(enemy);
+                        MyReacord.setRecord(MyReacord.getRecord() + 1);
                     }else{//如果是玩家坦克就会判断玩家坦克死亡
                         palyer.isLive = false;
                         shot.alive = false;
@@ -258,6 +295,7 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
                         shot.alive = false;
                         bombs.add(new Bomb(enemy.getX(),enemy.getY()));
                         enemies.remove(enemy);
+                        MyReacord.setRecord(MyReacord.getRecord() + 1);
                     }else{
                         palyer.isLive = false;
                         shot.alive = false;
