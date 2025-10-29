@@ -31,7 +31,10 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
             thread.start();
             enemies.add(enemy);
         }
-
+        //添加敌人坦克集合
+        for(int i = 0; i < enemies.size(); i++){
+            enemies.get(i).setEnemies(enemies);
+        }
         //加载爆炸图片
         bomb1 = Toolkit.getDefaultToolkit().getImage(MyPanel.class.getResource("/bomb1.png"));
         bomb2 = Toolkit.getDefaultToolkit().getImage(MyPanel.class.getResource("/bomb2.png"));
@@ -192,27 +195,33 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
     public void run() {
         while ( true){
             try {
-                Thread.sleep(30);
+                Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             //判断玩家子弹是否打中坦克
+            /*
+            存在数组越界的bug
+             */
             if(palyer.shots.size() != 0 && enemies.size() != 0){
                 for(int i = 0; i < enemies.size(); i++){
                     for(int j = 0; j < palyer.shots.size() ; j++){
                         try{
-                        hitTank(palyer.shots.get(j),enemies.get(i));
-                        }catch (Exception e){
-                            while(true){
-                                this.repaint();
+                            if(enemies.size() != 0) {
+                                hitTank(palyer.shots.get(j), enemies.get(i));
                             }
+                        }catch (Exception e){
+//                            while(true){
+//                                this.repaint();
+//                            }
+                            System.out.println("数组越界 敌人数" + enemies.size() + " i = " + i +" 玩家子弹数" + palyer.shots.size());
                         }
                     }
                 }
             }
             //判断玩家是否被击中
             hitPlayer();
-            System.out.println("画板在刷新");
+            //System.out.println("画板在刷新");
             this.repaint();
         }
     }

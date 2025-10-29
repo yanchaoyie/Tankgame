@@ -27,9 +27,19 @@ public class Player extends Tank{
             case 3:
                shot = new Shot(getX(),getY() + 20,3);
                break;
-        }
-        if(shots.size() < 5) {
+        }//限制玩家子弹
+        if(shots.size() < 100) {
             shots.add(shot);
+        }//限制玩家子弹频率
+        if(shots.size()!=0){
+            for(int i = 0;i < shots.size() - 1;i++){
+                Shot shot = shots.get(i);
+                Shot shot1 = shots.get(i + 1);
+                if(!(shot.x - shot1.x > 50 || shot.x - shot1.x < -50
+                        || shot.y - shot1.y > 50 || shot.y - shot1.y < -50)){
+                    shots.remove(shot1);
+                }
+            }
         }
         new Thread(shot).start();
     }
